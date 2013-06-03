@@ -1,3 +1,5 @@
+#!/usr/bin/env zsh
+
 read -r -p "Are you sure you want to remove Oh My Zsh? [y/N] " confirmation
 if [ "$confirmation" != y ] && [ "$confirmation" != Y ]; then
   echo "Uninstall cancelled"
