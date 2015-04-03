@@ -4,8 +4,8 @@ local user="%{$fg[cyan]%}%n%{$reset_color%}"
 local host="%{$fg[cyan]%}@%m%{$reset_color%}"
 local pwd="%{$fg[yellow]%}%~%{$reset_color%}"
 
-PROMPT='${user}${host} ${pwd}
-${smiley}  '
+PROMPT="${user}${host} ${pwd}
+${smiley}  "
 
 RPROMPT='$(ruby_prompt_info) %{$fg[white]%}$(git_prompt_info)%{$reset_color%}'
 
