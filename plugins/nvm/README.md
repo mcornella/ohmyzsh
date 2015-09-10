@@ -12,11 +12,14 @@ plugins=(... nvm)
 
 This plugin looks in a few well-known locations for the NVM installation, in the following order:
 
-* `$NVM_DIR` - Lets user force loading from an arbitrary location
+* `$NVM_INSTALL_DIR` - Forces loading from an arbitrary location that may be different from the
+  `$NVM_DIR` data directory. If provided, no other locations will be checked.
+* `$NVM_DIR` - Arbitrary installation location that is also the data directory
 * `~/.nvm` - Default installation location for NVM
 * `$(brew --prefix nvm)` - Mac Homebrew's NVM installation location
 
-After NVM is loaded, `$NVM_DIR` is set as part of NVM initialization, so you can use it regardless of whether you set it explicitly earlier.
+After NVM is loaded, `$NVM_DIR` is set as part of NVM initialization, so you can use it regardless of
+whether you set it explicitly earlier.
 
 Note that the NVM installer adds the commands to load NVM (by `source`ing it from the install location)
 directly to your `~/.zshrc` or other initialization file. This is not required for NVM to be "installed"
@@ -45,3 +48,5 @@ loading Oh My Zsh.
 
 * `$ZSH_NVM_BUNDLED_COMPLETION` - if `true`, uses NVM's own completion definition instead of the OMZ nvm
   plugin's definition.
+* `$NVM_INSTALL_DIR` - overrides installation search path
+* `$NVM_DIR` - NVM data directory and possible installation location
