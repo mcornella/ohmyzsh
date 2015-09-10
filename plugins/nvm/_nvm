@@ -17,6 +17,8 @@ _1st_arguments=(
   'version:resolve the given description to a single local version'
   'version-remote:resolve the given description to a single remote version'
   'ls-remote:list remote versions available for install'
+  'version:resolve given description to a single local version'
+  'version-remote:resolve given description to a single remote version'
   'deactivate:undo effects of `nvm` on current shell'
   'alias:show or set aliases'
   'unalias:deletes an alias'
