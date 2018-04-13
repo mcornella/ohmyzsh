@@ -130,6 +130,8 @@ function git_prompt_long_sha() {
 }
 
 function git_prompt_status() {
+  emulate -L zsh
+
   local status_prompt=""
 
   # A lookup table of each git status encountered
@@ -137,7 +139,8 @@ function git_prompt_status() {
 
   # Maps a git status prefix to an internal constant
   # This cannot use the prompt constants, as they may be empty
-  local -A prefix_constant_map=(
+  local -A prefix_constant_map
+  prefix_constant_map=(
     '?? '       'UNTRACKED'
     'A  '       'ADDED'
     'M  '       'ADDED'
@@ -156,7 +159,8 @@ function git_prompt_status() {
   )
 
   # Maps the internal constant to the prompt theme
-  local -A constant_prompt_map=(
+  local -A constant_prompt_map
+  constant_prompt_map=(
     'UNTRACKED' "$ZSH_THEME_GIT_PROMPT_UNTRACKED"
     'ADDED'     "$ZSH_THEME_GIT_PROMPT_ADDED"
     'MODIFIED'  "$ZSH_THEME_GIT_PROMPT_MODIFIED"
@@ -170,10 +174,11 @@ function git_prompt_status() {
   )
 
   # The order that the prompt displays should be added to the prompt
-  local status_constants=(UNTRACKED ADDED MODIFIED RENAMED DELETED STASHED
+  local status_constants
+  status_constants=(UNTRACKED ADDED MODIFIED RENAMED DELETED STASHED
                           UNMERGED AHEAD BEHIND DIVERGED)
 
-  local status_text=$(command git status --porcelain -b 2> /dev/null)
+  local status_text="$(command git status --porcelain -b 2> /dev/null)"
 
   # Don't continue on a catastrophic failure
   if [[ $? -eq 128 ]]; then
@@ -184,11 +189,13 @@ function git_prompt_status() {
     statuses_seen[STASHED]=1
   fi
 
-  local status_lines=("${(@f)${status_text}}");
+  local status_lines
+  status_lines=("${(@f)${status_text}}")
 
   # If the tracking line exists, get and parse it
-  if [[ $status_lines[1] =~ "^## [^ ]+ \[(.*)\]" ]]; then
-    local branch_statuses=("${(@s/,/)match}")
+  if [[ "$status_lines[1]" =~ "^## [^ ]+ \[(.*)\]" ]]; then
+    local branch_statuses
+    branch_statuses=("${(@s/,/)match}")
     for branch_status in $branch_statuses; do
       if [[ ! $branch_status =~ "(behind|diverged|ahead) ([0-9]+)?" ]]; then
         continue
