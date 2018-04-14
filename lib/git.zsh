@@ -141,7 +141,7 @@ function git_prompt_status() {
   # This cannot use the prompt constants, as they may be empty
   local -A prefix_constant_map
   prefix_constant_map=(
-    '?? '       'UNTRACKED'
+    '\?\? '     'UNTRACKED'
     'A  '       'ADDED'
     'M  '       'ADDED'
     'MM '       'ADDED'
@@ -189,11 +189,8 @@ function git_prompt_status() {
     statuses_seen[STASHED]=1
   fi
 
-  local status_lines
-  status_lines=("${(@f)${status_text}}")
-
   # If the tracking line exists, get and parse it
-  if [[ "$status_lines[1]" =~ "^## [^ ]+ \[(.*)\]" ]]; then
+  if [[ "${${(@f)status_text}[1]}" =~ "^## [^ ]+ \[(.*)\]" ]]; then
     local branch_statuses
     branch_statuses=("${(@s/,/)match}")
     for branch_status in $branch_statuses; do
@@ -203,29 +200,19 @@ function git_prompt_status() {
       local last_parsed_status=$prefix_constant_map[$match[1]]
       statuses_seen[$last_parsed_status]=$match[2]
     done
-    shift status_lines
   fi
 
-  # This not only gives us a status lookup, but the count of each type
-  for status_line in ${status_lines}; do
-    local status_prefix=${status_line[1, 3]}
-    local status_constant=${(v)prefix_constant_map[$status_prefix]}
+  for status_prefix in ${(k)prefix_constant_map}; do
+    local status_constant="${prefix_constant_map[$status_prefix]}"
+    local status_regex="(^|\n)$status_prefix"
 
-    if [[ -z $status_constant ]]; then
-      continue
+    if [[ "$status_text" =~ $status_regex ]]; then
+      statuses_seen[$status_constant]=1
     fi
-
-    (( statuses_seen[$status_constant]++ ))
   done
 
-  # At this point, the statuses_seen hash contains:
-  # - Tracking      => The difference between tracked and current
-  # - Modifications => The count of that type of modification
-  # - Stash         => Whether or not a stash exists
-  # Might be useful for someone?
-
   for status_constant in $status_constants; do
-    if [[ ${+statuses_seen[$status_constant]} -eq 1 ]]; then
+    if (( ${+statuses_seen[$status_constant]} )); then
       local next_display=$constant_prompt_map[$status_constant]
       status_prompt="$next_display$status_prompt"
     fi
