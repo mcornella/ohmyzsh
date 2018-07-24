@@ -1,3 +1,9 @@
+if [[ $ENABLE_PROFILING != true ]]; then
+    function start_profiling stop_profiling print_profiling { }
+    return
+fi
+
+zmodload zsh/datetime
 
 # Store the measurements indexed by the key (name)
 typeset -A _time_by_keys
@@ -6,14 +12,12 @@ _ordered_keys=()
 
 # Return a timestamp in milliseconds
 function _time_in_ms() {
-    echo $(( $(date +%s%N) / 1000000 ))
+    printf %.0f $(( EPOCHREALTIME * 1e3 ))
 }
 
 # Start recording the elapsed time
 # @param key the name that defines the measurement (must be unique)
 function start_profiling() {
-    [[ $ENABLE_PROFILING = "true" ]] || return
-
     local key="$1"
     local time_ms=$(_time_in_ms)
     _time_by_keys[$key]=$time_ms
@@ -23,8 +27,6 @@ function start_profiling() {
 # Stop recording the elapsed time
 # @param key the name that defines the measurement (must be the same than the one used with 'start_profiling')
 function stop_profiling() {
-    [[ $ENABLE_PROFILING = "true" ]] || return
-
     local key="$1"
     local time_ms=$(_time_in_ms)
 
@@ -37,8 +39,6 @@ function stop_profiling() {
 
 # Print all the measurements
 function print_profiling() {
-    [[ $ENABLE_PROFILING = "true" ]] || return
-
     local dots1='..................................................'
     local dots2='......'
 
