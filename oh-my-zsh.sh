@@ -1,5 +1,5 @@
 # Load the micro profiling framework
-source "$ZSH/lib/profiler.sh"
+source "$ZSH/core/profiler.zsh"
 # Start profiling
 start_profiling "TOTAL"
 
