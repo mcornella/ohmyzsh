@@ -6,3 +6,6 @@ custom/
 # temp files directories
 cache/
 log/
+
+# compiled files
+*.zwc
