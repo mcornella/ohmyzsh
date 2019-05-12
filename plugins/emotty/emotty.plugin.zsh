@@ -25,8 +25,14 @@ emotty_default_set=emoji
 function emotty() {
   # Use emotty set defined by user, fallback to default
   local emotty=${_emotty_sets[${emotty_set:-$emotty_default_set}]}
-  # Parse $TTY number, normalizing it to an emotty set index
-  (( tty = (${TTY##/dev/tty} % ${#${=emotty}}) + 1 ))
+
+  # Use `tty` if $TTY is not set (fix for FreeBSD)
+  local tty = ${TTY:-$(tty)}
+  # Parse $TTY number (1st version: /dev/ttyN, 2nd version: /dev/pts/N)
+  [[ $tty = /dev/tty* ]] && tty=${tty##/dev/tty} || tty=${tty:t}
+  # Normalize it to an emotty set index
+  (( tty = (tty % ${#${=emotty}}) + 1 ))
+
   local character_name=${${=emotty}[tty]}
   echo "${emoji[${character_name}]}${emoji2[emoji_style]}"
 }
