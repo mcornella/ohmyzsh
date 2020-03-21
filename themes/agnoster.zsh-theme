@@ -29,6 +29,25 @@
 # jobs are running in this shell will all be displayed automatically when
 # appropriate.
 
+### omz:start
+## Create a git repository in ~/testproject
+#% git init ~/testproject
+#% cd ~/testproject
+#% git commit --allow-empty -m 'Initial commit'
+## Create a commit in a detached head
+#% git commit --allow-empty -m 'Detached commit'; git tag detached-head-state; git reset --hard HEAD^
+## These are commands that will appear in the screenshot
+#$ gco detached-head-state -q
+#$ touch dirty-working-directory
+#$ cd
+## ssh milly
+## sudo -s
+#% top &
+#% rm no-such-file
+#% kill %%
+#$
+### omz:end
+
 ### Segment drawing
 # A few utility functions to make it easy and re-usable to draw segmented prompts
 

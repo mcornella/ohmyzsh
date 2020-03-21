@@ -1,3 +1,15 @@
+### omz:start
+## Create a git repository in ~/code/dotfiles
+#% git init ~/code/dotfiles
+#% cd ~/code/dotfiles
+## Create a new file
+#% touch new-file
+## These are commands that will appear in the screenshot
+#$ ls /
+## Add an empty #$ line to show an empty prompt
+#$
+### omz:end
+
 # af-magic.zsh-theme
 # Repo: https://github.com/andyfleming/oh-my-zsh
 # Direct Link: https://github.com/andyfleming/oh-my-zsh/blob/master/themes/af-magic.zsh-theme
