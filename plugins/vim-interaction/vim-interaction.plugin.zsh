@@ -4,8 +4,7 @@
 # Derek Wyatt (derek@{myfirstnamemylastname}.org
 # 
 
-function callvim
-{
+function callvim {
   if [[ $# == 0 ]]; then
     cat <<EOH
 usage: callvim [-b cmd] [-a cmd] [-n name] [file ... fileN]
@@ -19,11 +18,15 @@ EOH
     return 0
   fi
 
-  local cmd=""
-  local before="<esc>"
-  local after=""
-  # Look up the newest instance
+  # Look up the newest instance or start one
   local name="$(gvim --serverlist | tail -n 1)"
+  [[ -n "$name" ]] || {
+    gvim
+    name=GVIM
+  }
+
+  local before="<esc>" files after cmd
+
   while getopts ":b:a:n:" option
   do
     case $option in
@@ -36,22 +39,20 @@ EOH
     esac
   done
   shift $((OPTIND-1))
-  if [[ ${after#:} != $after && ${after%<cr>} == $after ]]; then
-    after="$after<cr>"
-  fi
-  if [[ ${before#:} != $before && ${before%<cr>} == $before ]]; then
-    before="$before<cr>"
-  fi
-  local files
-  if [[ $# -gt 0 ]]; then
-    # absolute path of files resolving symlinks (:A) and quoting special chars (:q)
-    files=':args! '"${@:A:q}<cr>"
-  fi
+
+  # If before or after commands begin with : and don't end with <cr>, append it
+  [[ ${after}  = :* && ${after}  != *\<cr\> ]] && after+="<cr>"
+  [[ ${before} = :* && ${before} != *\<cr\> ]] && before+="<cr>"
+  # Open files passed (:A means abs path resolving symlinks, :q means quoting special chars)
+  [[ $# -gt 0 ]] && files=':args! '"${@:A:q}<cr>"
+  # Pass the built vim command to gvim
   cmd="$before$files$after"
+
+  # Run the gvim command
   gvim --servername "$name" --remote-send "$cmd"
-  if typeset -f postCallVim > /dev/null; then
-    postCallVim
-  fi
+
+  # Run postCallVim if defined (maybe to bring focus to gvim, see README)
+  (( ! $+functions[postCallVim] )) || postCallVim
 }
 
 alias v=callvim
