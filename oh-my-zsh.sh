@@ -105,10 +105,23 @@ done
 
 # Load all of the plugins that were defined in ~/.zshrc
 for plugin ($plugins); do
+  # turn on tracing of $plugin
+  if zstyle -t ":omz:plugins:$plugin" debug; then
+    exec 3>&2 2>~/omz.$plugin.$$.log
+    set -xv
+  fi
+
   if [ -f $ZSH_CUSTOM/plugins/$plugin/$plugin.plugin.zsh ]; then
     source $ZSH_CUSTOM/plugins/$plugin/$plugin.plugin.zsh
   elif [ -f $ZSH/plugins/$plugin/$plugin.plugin.zsh ]; then
     source $ZSH/plugins/$plugin/$plugin.plugin.zsh
+  fi
+
+  # turn off tracing
+  if zstyle -t ":omz:plugins:$plugin" debug; then
+    set +xv
+    exec 2>&3 3>&-
+    print -u2 "oh-my-zsh: plugin trace at $HOME/omz.$plugin.$$.log"
   fi
 done
 
